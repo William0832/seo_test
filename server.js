@@ -15,6 +15,10 @@ const app = express()
 const port = process.env.PORT || 3000
 
 // middleware 
+const log = (req, res, next) => {
+  console.log(`${new Date().toISOString()} [${req.method}] ${req.path}`)
+  next()
+}
 const checkUserAgent = (req, res, next) => {
   const userAgent = req.headers['user-agent']
   if (userAgent.includes('facebook')) {
@@ -25,27 +29,22 @@ const checkUserAgent = (req, res, next) => {
 
   next()
 }
-const log = (req, res, next) => {
-  console.log(`${new Date().toISOString()} [${req.method}] ${req.path}`)
+const staticFile = (req, res, next) => {
+  const name = req.path.split('/')[1]
+  const isFile = ['html', 'js', 'css', 'jpg', 'png', 'svg', 'ico', 'text']
+    .includes(req.path.split('.')[1])
+  if (isFile) {
+    res.sendFile(name, { root })
+    return
+  }
   next()
 }
+const index = (req, res, next) => { res.sendFile('index.html', { root }) }
+
 app.set('view engine', 'pug')
 app.use(express.json())
 app.use(log)
-app.use(
-  (req, res, next) => {
-    const name = req.path.split('/')[1]
-    const isFile = ['html', 'js', 'css', 'jpg', 'png', 'svg', 'ico', 'text']
-      .includes(req.path.split('.')[1])
-    if (isFile) {
-      res.sendFile(name, { root })
-      return
-    }
-    next()
-  },
-  checkUserAgent,
-  (req, res) => { res.sendFile('index.html', { root }) }
-)
+app.use(staticFile, checkUserAgent, index)
 app.use((err, req, res, next) => {
   console.error(err.stack.red)
   res.sendStatus(500)
