@@ -1,14 +1,17 @@
 doctype html
 html(lang="en")
+  - var path = url === '/' ? '' : `-${url.slice(1)}`
+  - var t1 = `${title}${path}`
   head
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(property="fb:app_id", content="999880487247115")
     meta(property="og:type", content="website")    
-    meta(property="og:title", content=`${title}-${url}`)
+    meta(property="og:title", content=t1)
     meta(property="og:url", content=url)    
     meta(property="og:description", content=userAgent)
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     <meta property="og:image" content="https://www.blueberrytech.io/img/indexSnapshot.png">
     title SEO WEB
   body
+    h1=t1
