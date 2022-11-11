@@ -21,12 +21,12 @@ const log = (req, res, next) => {
 }
 const checkUserAgent = (req, res, next) => {
   const userAgent = req.headers['user-agent']
+  console.log({ userAgent })
   if (userAgent.includes('facebook')) {
     const title = 'SEO-PAGE',
       url = req.path
     return res.render('seo', { title, url, userAgent })
   }
-
   next()
 }
 const staticFile = (req, res, next) => {
